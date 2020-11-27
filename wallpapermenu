@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+DIR="$HOME/Immagini/Sfondi"
+BG=background.* #will works?
+OPT=fill #default
+CONFIG_FILE=$HOME/Immagini/Sfondi/.config
+main_page() {
+    clear
+    echo """            ~~~wallpapermenu~~~
+        [1] set wallpaper   [2] change settings
+        [3] apply           [4] cancel"""
+    read -N 1 -s choice
+    case $choice in
+        1)
+            set_wallpaper;;
+        2)
+            change_settings;;
+        3)
+            apply_settings $OPT $BG;;
+        4)
+            apply_settings "$(< $CONFIG_FILE)";;
+        *)
+        main_page;;
+    esac
+
+
+}
+
+set_wallpaper() {
+    local r_img=12
+    local c_img=40
+
+    list=$(ls $DIR)
+
+    bgs=( ${list} )
+
+    for i in ${list}; do
+        echo "$i"
+        chafa -w 9 -s $r_imgx$c_img $DIR/$i
+    done
+
+    read -N 1 -s choice
+
+    BG=$DIR/${bgs[$choice]}
+#    echo $BG
+#    echo "$DIR/${list}"
+    main_page
+}
+
+change_settings() {
+    clear
+    echo "[1] fill    [2] center
+        [3] max     [4] scale
+        [5] tile"
+    read -N 1 -s choice
+    case $choice in
+        1)
+            OPT="fill";;
+        2)
+            OPT="center";;
+        3)
+            OPT="max";;
+        4)
+            OPT="scale";;
+        5)
+            OPT="tile";;
+        *)
+            change_settings;;
+    esac
+    main_page
+}
+
+apply_settings() {
+    echo $1 $2 > $CONFIG_FILE
+
+    feh --bg-$1 $2
+}
+
+
+if [[ $1 == --no-gui ]]; then
+    apply_settings "$(< $CONFIG_FILE)"
+else
+    main_page
+fi
+
