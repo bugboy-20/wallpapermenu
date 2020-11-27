@@ -3,7 +3,7 @@ simple wallpaper changer (useful for minimal wms)
 
 ## install
 
-###### requisites
+###### dependencies
 
 * chafa
 * feh
