@@ -21,8 +21,8 @@ $ git clone https://github.com/bugboy-20/wallpapermenu.git
 open with your favorite text editor wallpapermenu 
 
 ```
-DIR= #insert your wallpaper dir address
-CONFIG_FILE= #insert a position for the config file
+DIR= /path/to/your/wallpaper/directory/
+CONFIG_FILE= /path/where/place/config/file/
 ```
 
 
