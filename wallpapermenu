@@ -33,10 +33,12 @@ set_wallpaper() {
     list=$(ls $DIR)
 
     bgs=( ${list} )
-
+    
+    n=0
     for i in ${list}; do
-        echo "$i"
+        echo "[$n] $i"
         chafa -w 9 -s $r_imgx$c_img $DIR/$i
+        let n++
     done
 
     read -N 1 -s choice
@@ -46,7 +48,6 @@ set_wallpaper() {
 #    echo "$DIR/${list}"
     main_page
 }
-
 change_settings() {
     clear
     echo "[1] fill    [2] center
