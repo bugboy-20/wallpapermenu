@@ -8,7 +8,7 @@ simple wallpaper changer (useful for minimal wms)
 * chafa
 * feh
 
-###### download
+###### download & install
 
 ```
 $ cd /tmp
