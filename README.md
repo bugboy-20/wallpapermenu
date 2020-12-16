@@ -16,6 +16,8 @@ $ cd /tmp
 $ git clone https://github.com/bugboy-20/wallpapermenu.git
 
 # mv wallpapermenu/wallpapermenu /usr/bin
+
+# chmod +x /usr/bin/wallpapermenu
 ```
 
 open with your favorite text editor wallpapermenu 
