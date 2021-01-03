@@ -74,7 +74,7 @@ change_settings() {
 apply_settings() {
     echo $1 $2 > $CONFIG_FILE
 
-    feh --bg-$1 $2
+    feh --no-fehbg --bg-$1 $2
 }
 
 
