@@ -33,7 +33,7 @@ set_wallpaper() {
     list=$(ls $DIR)
 
     bgs=( ${list} )
-    
+
     n=0
     for i in ${list}; do
         echo "[$n] $i"
@@ -48,6 +48,48 @@ set_wallpaper() {
 #    echo "$DIR/${list}"
     main_page
 }
+
+set_wallpaper() {
+    local r_img=22
+    local c_img=40
+    local focus_color='\033[7m'
+    local nc='\033[0m' # No Color
+    list=$(ls $DIR)
+    bgs=( ${list} )
+
+    wall_focused=0
+
+    while true; do
+        clear
+        n=0
+        paste <( echo ┌┤wallpapermenu├┐ #TODO: swap image and menù will fix the glitch
+        for i in ${list}; do
+            echo -n "│ "
+            if [ $n == $wall_focused ]; then
+                echo -n -e $focus_color
+            fi
+            echo -e "[$n] ${i:0:9}$nc │"
+            let n++
+        done
+        echo └───────────────┘
+        while [[ $n -lt $r_img ]]; do #I'll try something better
+            echo "                  "
+            let n++
+        done ) <( chafa -w 9 -s $r_imgx$c_img $DIR/${bgs[$wall_focused]} )
+        read -N 1 -s choice
+        if [[ $choice = "w" ]] && [[ $wall_focused -gt 0 ]] ; then
+            let wall_focused--;
+        elif [[ $choice = "s" ]] && [[ $wall_focused -lt $((${#bgs[@]}-1)) ]]; then
+            let wall_focused++;
+        elif [[ $choice = "e" ]]; then
+            BG=$DIR/${bgs[$wall_focused]}; break
+        elif [[ $choice -ge 0 ]] && [[ $choice -lt ${#bgs[@]} ]]; then
+            BG=$DIR/${bgs[$choice]}; break
+        fi
+    done
+    main_page
+}
+
 change_settings() {
     clear
     echo "[1] fill    [2] center
@@ -74,7 +116,7 @@ change_settings() {
 apply_settings() {
     echo $1 $2 > $CONFIG_FILE
 
-    feh --no-fehbg --bg-$1 $2
+    feh --bg-$1 $2
 }
 
 
@@ -83,4 +125,3 @@ if [[ $1 == --no-gui ]]; then
 else
     main_page
 fi
-
