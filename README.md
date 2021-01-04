@@ -1,6 +1,6 @@
-# wallpapermenu
+# wallpapermenu - BetterUI
 simple wallpaper changer (useful for minimal wms)
-
+Prettier but bugged version of main branch
 ## install
 
 ###### dependencies
