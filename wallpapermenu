@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-DIR="$HOME/Immagini/Sfondi"
+DIR="$HOME/Immagini/sfondi"
 BG=background.* #will works?
 OPT=fill #default
-CONFIG_FILE=$HOME/Immagini/Sfondi/.config
+CONFIG_FILE=$HOME/Immagini/sfondi/.config
 main_page() {
     clear
     echo """            ~~~wallpapermenu~~~
@@ -16,6 +16,7 @@ main_page() {
         2)
             change_settings;;
         3)
+            echo $OPT $BG > $CONFIG_FILE;
             apply_settings $OPT $BG;;
         4)
             apply_settings "$(< $CONFIG_FILE)";;
@@ -72,13 +73,16 @@ change_settings() {
 }
 
 apply_settings() {
-    echo $1 $2 > $CONFIG_FILE
 
     feh --no-fehbg --bg-$1 $2
 }
 
 
 if [[ $1 == --no-gui ]]; then
+    apply_settings "$(< $CONFIG_FILE)"
+elif [[ $1 == --no-cli ]]; then
+    apply_settings "$(< $CONFIG_FILE)"
+elif [[ $1 == --no-ui ]]; then
     apply_settings "$(< $CONFIG_FILE)"
 else
     main_page
