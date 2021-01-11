@@ -1,5 +1,5 @@
 # wallpapermenu
-simple wallpaper changer (useful for minimal wms)
+simple wallpaper changer
 
 ## install
 
@@ -27,13 +27,12 @@ DIR= /path/to/your/wallpaper/directory/
 CONFIG_FILE= /path/where/place/config/file/
 ```
 
-
-
 ## how to use it
 
-just open the file for the "GUI"
+just open the script to use the user interface
 
-exec with the --no-gui will set the background as the config file say
+exec with the --no-cli will set the background according to .config file
 
 
-e.g. add `exec_always bash -c "wallpapermenu --no-gui"` in `.config/i3/config`
+e.g. add `exec_always bash -c "wallpapermenu --no-cli"` in `.config/i3/config`
+
