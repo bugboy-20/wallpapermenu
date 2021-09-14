@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /*
  * CONFIG_FILE:
@@ -12,7 +13,7 @@
  * else read it
 */
 // #define CONFIG_FILE "$HOME/Immagini/sfondi/.config"
-#define CONFIG_FILE "/home/diego/.config/wallpapermenu/wallpapermenurc"
+#define CONFIG_FILE "/home/diego/.config/wallpapermenu/wallpapermenurc" // TODO: non tutti si chiamano diego
 
 enum print_mode {
     CENTER,
@@ -23,6 +24,7 @@ enum print_mode {
 };
 
 enum print_mode pm; 
+char directory[256];
 char background[128];
 char option[8];
 
@@ -37,6 +39,9 @@ int main(int argc, char *argv[]) {
         for (int i=1; i<argc; i++) {
             if(!strcmp(argv[i], "--no-gui"))
                 done();
+            printf("a\n");
+            if(!strcmp(argv[i], "--help"))
+                printf("\n--no-gui\tjust read config file and exit (same as nitrogen --restore)");
         }
     return 0;
 }
@@ -47,32 +52,52 @@ void done() {
     strcat(option, " ");
     
     strcat(cmd, option);
+    strcat(cmd, directory);
     strcat(cmd,background);
-    //printf("%s\n",cmd);
+    printf("%s\n",cmd);
     system(cmd);
 }
 
 int read_config() {
+    printf("emtro in read_config\n");
     FILE *config_file;
-    int i,ri;
+    int i,ri=0;
     char c;
     char read[2048]="";
     read[0]='\0';
 
-    if((config_file = fopen(CONFIG_FILE, "r"))==NULL)
+    if(access( CONFIG_FILE, F_OK ) != 0 )
         configure_filerc();
+
+    config_file = fopen(CONFIG_FILE, "r");
 
     while ((c=getc(config_file))!=EOF) {
         if(c=='#') //comment TODO: gestire spazi multipli
             while (getc(config_file)!='\n');
+        /*else if (c=='\n') {
+            printf("elimino le prove\n");
+            read[0]='\0';
+            ri=0;
+        }*/
         else {
             read[ri++]=c;
+            if (!strcmp(read, "DIR ")) {
+                for (i=0; (c=getc(config_file))!='\n'; i++) {
+                    directory[i]=c;
+                }
+                printf("DIR letto: %s\n",directory);
+                for (i=0; i<ri; i++) 
+                    read[i]='\0';
+                ri=0;
+                continue;
+            }
             if (!strcmp(read, "BG ")) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     background[i]=c;
                 }
                 printf("BG letto: %s\n",background);
-                read[0]='\0';
+                for (i=0; i<ri; i++) 
+                    read[i]='\0';
                 ri=0;
                 continue;
             }
@@ -81,19 +106,23 @@ int read_config() {
                     option[i]=c;
                 }
                 printf("OPT letto: %s\n",option);
-                read[0]='\0';
+                for (i=0; i<ri; i++) 
+                    read[i]='\0';
                 ri=0;
                 continue;
             }
+
         }
     }
+    /*
     printf("\n\n\n");
     for (i=0; read[i]!='\0'; i++) {
         printf("%d: %c\t%d\n",i,read[i],read[i]);
     }
     printf("\n\n\n");
     fclose(config_file);
-    return 0;
+    */
+    return 0; 
 }
 
 void configure_filerc() {
