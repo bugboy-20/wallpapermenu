@@ -1,7 +1,9 @@
 # wallpapermenu
 simple wallpaper changer
 
-rewritten in C with ncurses
+rewritten in C with ncurses. 
+
+*Not working rn*, see `main` branch for the ugly but working version
 
 ## install
 
