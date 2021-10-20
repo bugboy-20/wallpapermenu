@@ -5,7 +5,10 @@
 #include <unistd.h>
 //#include <dirent.h>
 #include "rcfile.h"
+#include "ncurses-menu.h"
 
+#define MENU_WIDTH 20
+#define DEBUG 1
 /*
  * CONFIG_FILE:
  * #define DIR "$HOME/Immagini/sfondi"
@@ -16,26 +19,25 @@
 */
 // #define CONFIG_FILE "$HOME/Immagini/sfondi/.config"
 
-enum print_mode {
-    CENTER,
-    FILL,
-    MAX,
-    SCALE,
-    TILE
-};
-
-enum print_mode pm; 
 char directory[256];
 char background[128];
 char option[8];
-char wallpapers[256][256];
+/*
+char **orderedIds;
+
+orderedIds = malloc(variableNumberOfElements * sizeof(char*));
+for (int i = 0; i < variableNumberOfElements; i++)
+    orderedIds[i] = malloc((ID_LEN+1) * sizeof(char)); // yeah, I know sizeof(char) is 1, but to make it clear...
+ */
 
 void done();
-int getWallpaper();
+char **getWallpaper(char **wallpapers, int* nEntries); // get wallpapers and append "options" and "exit"
 
 int main(int argc, char *argv[]) {
-    read_filerc(directory,background, option);
+    int i,menu_ret=0,nEntries;
+    char **menu;
 
+    read_filerc(directory,background, option);
 
     if(argc>1)
         for (int i=1; i<argc; i++) {
@@ -45,14 +47,31 @@ int main(int argc, char *argv[]) {
                 printf("\n--no-gui\tjust read config file and exit (same as nitrogen --restore)");
         }
 
+    getWallpaper(menu, &nEntries);
 
-    for (int i=0; i<256; i++)
-        wallpapers[i][0]='\0';
+    printf("asdasd");
+    printf("%s", menu[0]);
 
-    getWallpaper(wallpapers);
 
-    for(int i=0; wallpapers[i][0]!='\0'; i++)
-        printf("%d: %s\n",i,wallpapers[i]);
+    initscr();                  
+    noecho();
+    keypad (stdscr, TRUE);
+    meta (stdscr, TRUE);
+    nodelay (stdscr, FALSE);
+    notimeout (stdscr, TRUE);
+    raw();
+    curs_set (0);
+    printw("primo");
+    nEntries=get_atls(menu)+2; //wallpapers + option + exit
+
+    do {
+       printw("secondo");
+       menu_ret=print_menu(2, 2, nEntries, MENU_WIDTH, "wallpapermenu", menu, menu_ret);
+    }while (menu_ret!=nEntries);
+
+    endwin();
+
+
     return 0;
 }
 
@@ -67,52 +86,53 @@ int EndsWith(const char *str, const char *suffix)
     return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
-int getWallpaper() {
+char** getWallpaper(char **menu, int *nEntries) {
 
+/*
+char **orderedIds;
+
+orderedIds = malloc(variableNumberOfElements * sizeof(char*));
+for (int i = 0; i < variableNumberOfElements; i++)
+    orderedIds[i] = malloc((ID_LEN+1) * sizeof(char)); // yeah, I know sizeof(char) is 1, but to make it clear...
+ */
     int i=0,j=0;
-    char command[256]="ls ",c;
+    char command[256]="ls ",c,wallpapers[256][256];
     strcat(command, directory);
 
     FILE *cmd=popen(command, "r");
     char result[256]={0x0};
 
-
+#if DEBUG > 5
+    printf("ls:\n");
+#endif 
     while ((c=getc(cmd))!=EOF) {
+#if DEBUG > 5
+        printf("%c",c);
+#endif
         if(c=='\n') {
             j=0;
-            strcpy(wallpapers[i++],result);
+            i++;
         }
-        else
-            result[j++]=c;
+        else {
+            wallpapers[i][j++]=c;
+        }
     }
-    pclose(cmd);
-    return 0;
+    printf("\t---\tgetWallpaper\n");
+    str_cp(wallpapers[i++], "option");
+    str_cp(wallpapers[i], "exit");
+    printf("suss?");
+    printf("\t\t\tgetWallpaper %d\n",i);
+    menu = malloc(i * sizeof(char*)); 
+    printf("sos?");
+    for (int j = 0; j < i; j++) {
+        menu[j] = malloc(strlen(wallpapers[j]));
+        str_cp(wallpapers[j], menu[j]);
+    }
 
-    /*
-    DIR *dir; //TODO: pipe instead of this shit
-    int i=0;
-    struct dirent *ent;
-    for(i=0;i<256;i++)
-        for(int j=0;j<256;j++)
-            printf("%c",wallpapers[i][j]);
-    if ((dir = opendir (directory)) != NULL) {
-      // print all the files and directories within directory 
-        while ((ent = readdir (dir)) != NULL) {
-            if (EndsWith(ent->d_name,"png") || EndsWith(ent->d_name,"jpg")) { //jpeg JPG PNG 
-                printf("sas\n");
-                printf("%s %s\n",wallpapers[i-1],ent->d_name);
-                strcpy(wallpapers[i++],ent->d_name);
-            }
-            
-      }
-      closedir (dir);
-    } else {
-      // could not open directory
-      perror ("");
-      return -1;
-    }*/
-    return 0;
-    
+    pclose(cmd);
+
+    printf("sas?");
+    return menu;
 }
 
 
