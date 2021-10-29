@@ -19,7 +19,8 @@
 /************************************************************************/
 
 //#include <curses.h>
-
+#ifndef NCURSES_MENU_H
+#define NCURSES_MENU_H
 /* Calculates the length of a "string" */
 int n_chars (char *str);
 
@@ -32,3 +33,4 @@ int get_atls(char **entries);
 /* Prints a menu according to your arguments/parameters,
    see the README file for more details */
 int print_menu (int sty, int x, int alts, int width, char title[], char **entries, int start);
+#endif

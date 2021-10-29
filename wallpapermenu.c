@@ -9,67 +9,59 @@
 
 #define MENU_WIDTH 20
 #define DEBUG 1
-/*
- * CONFIG_FILE:
- * #define DIR "$HOME/Immagini/sfondi"
- * #define BG "background.jpg"
- * #define OPT fill #default
- * CONFIG !EXIST -> CREATE && EXIT
- * else read it
-*/
-// #define CONFIG_FILE "$HOME/Immagini/sfondi/.config"
+#define STD_STR_LENGHT 256
 
 char directory[256];
 char background[128];
-char option[8];
-/*
-char **orderedIds;
+char option[8]; //TODO spostare dal globale
 
-orderedIds = malloc(variableNumberOfElements * sizeof(char*));
-for (int i = 0; i < variableNumberOfElements; i++)
-    orderedIds[i] = malloc((ID_LEN+1) * sizeof(char)); // yeah, I know sizeof(char) is 1, but to make it clear...
- */
-
-void done();
-char **getWallpaper(char **wallpapers, int* nEntries); // get wallpapers and append "options" and "exit"
+void done(); //program exit
+char **getWallpaper(char *directory, int* nEntries); // get wallpapers, append "options" and "exit" and the number of entries
+//void getWallpaper(char **wallpapers, int* nEntries); // get wallpapers, append "options" and "exit" and the number of entries
 
 int main(int argc, char *argv[]) {
+//      ---- TAKE AWAY ----
+    if(argc>1)
+        for (int i=1; i<argc; i++) {
+            if(!strcmp(argv[i], "--no-gui")) {
+                read_filerc(directory,background, option);
+                done();
+                exit(EXIT_SUCCESS);
+            }
+            if(!strcmp(argv[i], "--help")) {
+                printf("\n--no-gui\tjust read config file and exit (same as nitrogen --restore)\n");
+                exit(EXIT_SUCCESS);
+            }          
+        }
+//          ---- WALLPAPERMENU ----
     int i,menu_ret=0,nEntries;
     char **menu;
 
-    read_filerc(directory,background, option);
+    read_filerc(directory, background, option);
+    menu=getWallpaper(directory, &nEntries);
 
-    if(argc>1)
-        for (int i=1; i<argc; i++) {
-            if(!strcmp(argv[i], "--no-gui"))
-                done();
-            if(!strcmp(argv[i], "--help"))
-                printf("\n--no-gui\tjust read config file and exit (same as nitrogen --restore)");
-        }
-
-    getWallpaper(menu, &nEntries);
-
-    printf("asdasd");
-    printf("%s", menu[0]);
+    for(i=0;i<nEntries;i++)
+        printf("%s\n",menu[i]);
+    free(menu);
 
 
-    initscr();                  
-    noecho();
-    keypad (stdscr, TRUE);
-    meta (stdscr, TRUE);
-    nodelay (stdscr, FALSE);
-    notimeout (stdscr, TRUE);
-    raw();
-    curs_set (0);
-    printw("primo");
-    nEntries=get_atls(menu)+2; //wallpapers + option + exit
+    //initscr();                  
+    //noecho();
+    //keypad (stdscr, TRUE);
+    //meta (stdscr, TRUE);
+    //nodelay (stdscr, FALSE);
+    //notimeout (stdscr, TRUE);
+    //raw();
+    //curs_set (0);
+    //printw("primo");
+    //nEntries=get_atls(menu)+2; //wallpapers + option + exit
 
-    do {
-       printw("secondo");
-       menu_ret=print_menu(2, 2, nEntries, MENU_WIDTH, "wallpapermenu", menu, menu_ret);
-    }while (menu_ret!=nEntries);
+    //do {
+    //   printw("secondo");
+    //   menu_ret=print_menu(2, 2, nEntries, MENU_WIDTH, "wallpapermenu", menu, menu_ret);
+    //}while (menu_ret!=nEntries);
 
-    endwin();
+    //endwin();
 
 
     return 0;
@@ -86,21 +78,13 @@ int EndsWith(const char *str, const char *suffix)
     return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
-char** getWallpaper(char **menu, int *nEntries) {
-
-/*
-char **orderedIds;
-
-orderedIds = malloc(variableNumberOfElements * sizeof(char*));
-for (int i = 0; i < variableNumberOfElements; i++)
-    orderedIds[i] = malloc((ID_LEN+1) * sizeof(char)); // yeah, I know sizeof(char) is 1, but to make it clear...
- */
+char **getWallpaper(char *directory, int *nEntries) {
     int i=0,j=0;
     char command[256]="ls ",c,wallpapers[256][256];
     strcat(command, directory);
-
     FILE *cmd=popen(command, "r");
     char result[256]={0x0};
+    char **menu;
 
 #if DEBUG > 5
     printf("ls:\n");
@@ -110,6 +94,7 @@ for (int i = 0; i < variableNumberOfElements; i++)
         printf("%c",c);
 #endif
         if(c=='\n') {
+            wallpapers[i][j]='\0';
             j=0;
             i++;
         }
@@ -117,21 +102,29 @@ for (int i = 0; i < variableNumberOfElements; i++)
             wallpapers[i][j++]=c;
         }
     }
-    printf("\t---\tgetWallpaper\n");
-    str_cp(wallpapers[i++], "option");
-    str_cp(wallpapers[i], "exit");
-    printf("suss?");
-    printf("\t\t\tgetWallpaper %d\n",i);
-    menu = malloc(i * sizeof(char*)); 
-    printf("sos?");
-    for (int j = 0; j < i; j++) {
-        menu[j] = malloc(strlen(wallpapers[j]));
-        str_cp(wallpapers[j], menu[j]);
-    }
-
     pclose(cmd);
 
-    printf("sas?");
+    strcpy(wallpapers[i++], "option");
+    strcpy(wallpapers[i++], "exit"); //chiarire perchè qui va ++
+    *nEntries=i;
+#if DEBUG > 5
+    printf("\t\t\tgetWallpaper %d\n",*nEntries);
+    if(menu==NULL) {
+        printf("ERRORE\n");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("wallpapers:\n");
+    for (j = 0; j < i; j++) 
+        printf("%s\t\tlen: %lu\n",wallpapers[j],strlen(wallpapers[j]));
+#endif
+
+    menu = (char**) malloc(*nEntries * sizeof(char*));
+    for (j = 0; j < *nEntries; j++) {
+        menu[j] = (char*)malloc(strlen(wallpapers[j]) + 1);
+        strcpy(menu[j],wallpapers[j]);
+        //printf("%s len:%lu\n",menu[j],strlen(wallpapers[j]));
+    }
     return menu;
 }
 

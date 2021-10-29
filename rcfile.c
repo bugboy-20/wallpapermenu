@@ -7,7 +7,9 @@
 #define CONFIG_FILE "/home/diego/.config/wallpapermenu/wallpapermenurc" // TODO: non tutti si chiamano diego
 
 int read_filerc(char *directory, char *background, char *option) {
-    printf("emtro in read_config\n");
+#if DEBUG > 10
+    printf("entro in read_config\n");
+#endif
     FILE *config_file;
     int i,ri=0;
     char c;
@@ -33,7 +35,9 @@ int read_filerc(char *directory, char *background, char *option) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     directory[i]=c;
                 }
+#if DEBUG > 10
                 printf("DIR letto: %s\n",directory);
+#endif
                 for (i=0; i<ri; i++) 
                     read[i]='\0';
                 ri=0;
@@ -43,7 +47,9 @@ int read_filerc(char *directory, char *background, char *option) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     background[i]=c;
                 }
+#if DEBUG > 10
                 printf("BG letto: %s\n",background);
+#endif
                 for (i=0; i<ri; i++) 
                     read[i]='\0';
                 ri=0;
@@ -53,7 +59,9 @@ int read_filerc(char *directory, char *background, char *option) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     option[i]=c;
                 }
+#if DEBUG > 10
                 printf("OPT letto: %s\n",option);
+#endif
                 for (i=0; i<ri; i++) 
                     read[i]='\0';
                 ri=0;
@@ -79,5 +87,5 @@ void init_filerc() {
     config_file = fopen(CONFIG_FILE, "w");
     fprintf(config_file, "#DIR wallpapers directory\n#BG background name use write \"SEQUENCE [time in minutes]\" to se caging bg\n#OPT center, fill...\n");
     printf("Created wallpapermenurc on %s, please use it to configue wallpapermenu",CONFIG_FILE);
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
