@@ -11,21 +11,21 @@
 #define DEBUG 1
 #define STD_STR_LENGHT 256
 
-char directory[256];
-char background[128];
-char option[8]; //TODO spostare dal globale
 
-void done(); //program exit
+void done(char *directory, char *background, char *option); //program exit
 char **getWallpaper(char *directory, int* nEntries); // get wallpapers, append "options" and "exit" and the number of entries
 //void getWallpaper(char **wallpapers, int* nEntries); // get wallpapers, append "options" and "exit" and the number of entries
 
 int main(int argc, char *argv[]) {
+    char directory[256];
+    char background[128];
+    char option[8];
 //      ---- TAKE AWAY ----
     if(argc>1)
         for (int i=1; i<argc; i++) {
             if(!strcmp(argv[i], "--no-gui")) {
                 read_filerc(directory,background, option);
-                done();
+                done(directory,background,option);
                 exit(EXIT_SUCCESS);
             }
             if(!strcmp(argv[i], "--help")) {
@@ -34,34 +34,27 @@ int main(int argc, char *argv[]) {
             }          
         }
 //          ---- WALLPAPERMENU ----
-    int i,menu_ret=0,nEntries;
+    int i,menu_ret=1,nEntries; //MEM il menu conta da 1 a nEntries
     char **menu;
 
     read_filerc(directory, background, option);
     menu=getWallpaper(directory, &nEntries);
 
-    for(i=0;i<nEntries;i++)
-        printf("%s\n",menu[i]);
-    free(menu);
+    initscr();                  
+    noecho();
+    keypad (stdscr, TRUE);
+    meta (stdscr, TRUE);
+    nodelay (stdscr, FALSE);
+    notimeout (stdscr, TRUE);
+    raw();
+    curs_set (0);
 
+    sleep(2);
+    do {
+       menu_ret=print_menu(2, 2, nEntries, MENU_WIDTH, "wallpapermenu", menu, menu_ret);
+    }while (menu_ret!=nEntries);
 
-    //initscr();                  
-    //noecho();
-    //keypad (stdscr, TRUE);
-    //meta (stdscr, TRUE);
-    //nodelay (stdscr, FALSE);
-    //notimeout (stdscr, TRUE);
-    //raw();
-    //curs_set (0);
-    //printw("primo");
-    //nEntries=get_atls(menu)+2; //wallpapers + option + exit
-
-    //do {
-    //   printw("secondo");
-    //   menu_ret=print_menu(2, 2, nEntries, MENU_WIDTH, "wallpapermenu", menu, menu_ret);
-    //}while (menu_ret!=nEntries);
-
-    //endwin();
+    endwin();
 
 
     return 0;
@@ -131,7 +124,7 @@ char **getWallpaper(char *directory, int *nEntries) {
 
 
 
-void done() {
+void done(char *directory, char *background, char *option) {
     char cmd[256] = "feh --no-fehbg --bg-";
 
     strcat(option, " ");

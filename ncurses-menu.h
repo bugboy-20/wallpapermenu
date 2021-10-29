@@ -28,7 +28,7 @@ int n_chars (char *str);
 void str_cp (char *dest, char *src);
 
 /* get number of entries */
-int get_atls(char **entries);
+//int get_atls(char **entries);
 
 /* Prints a menu according to your arguments/parameters,
    see the README file for more details */

@@ -22,8 +22,7 @@
 #include <stdio.h>
 #include "ncurses-menu.h"
 /* Calculates the length of a "string" */
-int
-n_chars (char *str)
+int n_chars (char *str)
 {
     int i = 0;
 
@@ -35,8 +34,7 @@ n_chars (char *str)
 }
 
 /* Copies string "src" to string "dest" */
-void
-str_cp (char *dest, char *src)
+void str_cp (char *dest, char *src)
 {
     int i = 0;
 
@@ -54,7 +52,7 @@ str_cp (char *dest, char *src)
                         /* last element (now dest == src).      */
     return;
 }
-
+/*
 int get_atls(char **entries){
     register int i;
     printf("eccol");
@@ -62,7 +60,7 @@ int get_atls(char **entries){
     printf("eccol");
     return i;
 }
-
+*/
 
 
 
@@ -70,9 +68,7 @@ int get_atls(char **entries){
    see the README file for more details */
 
 
-int
-print_menu (int sty, int x, int alts, int width,
-            char title[], char **entries, int start)
+int print_menu (int sty, int x, int alts, int width, char title[], char **entries, int start)
 {
     /* "i" will be used for printing out a character several times
        in a row by using for-loops. Later it will also be used
@@ -117,6 +113,7 @@ print_menu (int sty, int x, int alts, int width,
         blankspace2 = (width - n_chars (title) + 1) / 2;
         blankspace1 = blankspace2 - 1;      /* menu title, it will be  */
     }                                       /* placed slightly left.   */
+
 
     else
     {
