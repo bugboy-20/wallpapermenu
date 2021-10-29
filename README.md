@@ -1,6 +1,10 @@
 # wallpapermenu
 simple wallpaper changer
 
+rewritten in C with ncurses. 
+
+*Not working rn*, see `main` branch for the ugly but working version
+
 ## install
 
 ###### dependencies
@@ -15,17 +19,12 @@ $ cd /tmp
 
 $ git clone https://github.com/bugboy-20/wallpapermenu.git
 
+$ gcc ...
+
 # mv wallpapermenu/wallpapermenu /usr/bin
 
-# chmod +x /usr/bin/wallpapermenu
 ```
 
-open with your favorite text editor wallpapermenu 
-
-```
-DIR= /path/to/your/wallpaper/directory/
-CONFIG_FILE= /path/where/place/config/file/
-```
 
 ## how to use it
 
