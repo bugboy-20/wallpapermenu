@@ -12,6 +12,6 @@
 #ifndef RCFILE_H
 #define RCFILE_H
 int read_filerc(char *directory, char *background, char *option);
-void init_filerc();
-int write_filerc();
+void init_filerc(const char *str_config_file);
+int write_filerc( const char *directory,  const char *background,  const char *option);
 #endif

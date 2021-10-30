@@ -3,7 +3,7 @@ simple wallpaper changer
 
 rewritten in C with ncurses. 
 
-*Not working rn*, see `main` branch for the ugly but working version
+*Not working rn*, see `main` branch for the (ugly but) working version
 
 ## install
 
@@ -11,15 +11,16 @@ rewritten in C with ncurses.
 
 * chafa
 * feh
+* ncurses
 
 ###### download & install
 
-```
-$ cd /tmp
-
+```sh
 $ git clone https://github.com/bugboy-20/wallpapermenu.git
 
-$ gcc ...
+$ cd wallpapermenu
+
+$ make
 
 # mv wallpapermenu/wallpapermenu /usr/bin
 
@@ -28,10 +29,10 @@ $ gcc ...
 
 ## how to use it
 
-just open the script to use the user interface
+just open the script to use it with the user interface
 
-exec with the --no-cli will set the background according to .config file
+exec with the --no-tui will set the background according to .config file
 
 
-e.g. add `exec_always bash -c "wallpapermenu --no-cli"` in `.config/i3/config`
+e.g. add `exec_always bash -c "wallpapermenu --no-tui"` in `.config/i3/config`
 
