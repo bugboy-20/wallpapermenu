@@ -12,25 +12,13 @@ int read_filerc(char *directory, char *background, char *option) {
     char c;
     char read[2048]="";
     char *homedir;
+    const char *rcfilePath;
     read[0]='\0';
 
+    rcfilePath = get_rcfilePath();
 
-    config_file_dir= (char*) malloc(256);
 
-    if ((homedir = getenv("HOME")) == NULL) {
-        printf("$HOME path not found");
-        exit(EXIT_FAILURE);
-    }
-    //printf("%s\n",config_file_dir);
-    //sleep(5);
-    config_file_dir= (char *) realloc(config_file_dir, strlen(homedir)+25);
-    strcat(config_file_dir, homedir);
-    strcat(config_file_dir, "/.config/wallpapermenurc");
-
-    if(access( config_file_dir, F_OK ) != 0 )
-        init_filerc(config_file_dir);
-
-    config_file = fopen(config_file_dir, "r");
+    config_file = fopen(rcfilePath, "r");
 
     while ((c=getc(config_file))!=EOF) {
         if(c=='#') //comment TODO: gestire spazi multipli
@@ -90,6 +78,49 @@ int write_filerc( const char *directory,  const char *background,  const char *o
     fclose(config_file);
     return 0;
 }
+
+const char *get_rcfilePath() {
+    int homeLen;
+    const char *homedir;
+    char *path;
+    char *config_file_dir= (char*) malloc(256);
+
+
+    if ((homedir = getenv("HOME")) == NULL) {
+        printf("$HOME path not found");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(config_file_dir, homedir);
+    homeLen=strlen(homedir);
+
+    strcat(config_file_dir, "/.config/wallpapermenurc");
+    
+    if(access( config_file_dir, F_OK ) != 0 ) {
+        config_file_dir[homeLen]='\0';
+        strcat(config_file_dir, "/.config/wallpapermenu/wallpapermenurc");
+    }
+    else if(access(config_file_dir, F_OK) !=0) {
+        config_file_dir[homeLen]='\0';
+        strcat(config_file_dir, "/.config/wallpapermenu/wallpapermenu.conf");
+    }
+    else {
+        config_file_dir[homeLen]='\0';
+        strcat(config_file_dir, "/.config/wallpapermenurc");
+        init_filerc(config_file_dir);
+    }
+    
+
+    path = (char *) malloc(strlen(config_file_dir)+1);
+    strcpy(path, config_file_dir);
+    free(config_file_dir);
+
+#if DEBUG > 10
+    printf("%s\n",config_file_dir);
+    printf("%s\n",path);
+#endif
+    return path;
+}
+
 
 void init_filerc(const char *str_config_file) {
     FILE *config_file;
