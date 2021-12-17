@@ -48,14 +48,16 @@ int main(int argc, char *argv[]) {
     notimeout (stdscr, TRUE);
     raw();
     curs_set (0);
-
-    sleep(2);
-    do {
+    //do {
        menu_ret=print_menu(2, 2, nEntries, MENU_WIDTH, "wallpapermenu", menu, menu_ret);
-    }while (menu_ret!=nEntries);
+       strcpy(background, menu[menu_ret]);
+    //}while (menu_ret!=nEntries);
 
     endwin();
 
+
+    write_filerc(directory, background, option);
+    done(directory,background,option);
 
     return 0;
 }

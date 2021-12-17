@@ -4,6 +4,7 @@
 #include <string.h>
 #include "rcfile.h"
 
+char *config_file_dir;
 
 int read_filerc(char *directory, char *background, char *option) {
 #if DEBUG > 10
@@ -13,7 +14,7 @@ int read_filerc(char *directory, char *background, char *option) {
     int i,ri=0;
     char c;
     char read[2048]="";
-    char *config_file_dir,*homedir;
+    char *homedir;
     read[0]='\0';
 
 
@@ -88,13 +89,23 @@ int read_filerc(char *directory, char *background, char *option) {
     for (i=0; read[i]!='\0'; i++) {
         printf("%d: %c\t%d\n",i,read[i],read[i]);
     }
-    printf("\n\n\n");
+    printf("\n\n\n");*/
     fclose(config_file);
-    */
+    
     return 0; 
 }
 
 int write_filerc( const char *directory,  const char *background,  const char *option) {
+    FILE *config_file;
+
+    if(config_file==NULL)
+        return -1;
+
+    config_file = fopen(config_file_dir, "w");
+
+    fprintf(config_file, "#\t this file has been automatically rewritten\nDIR %s\nBG %s\nOPT %s",directory,background,option);
+
+    fclose(config_file);
     return 0;
 }
 
