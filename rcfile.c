@@ -7,9 +7,6 @@
 char *config_file_dir;
 
 int read_filerc(char *directory, char *background, char *option) {
-#if DEBUG > 10
-    printf("entro in read_config\n");
-#endif
     FILE *config_file;
     int i,ri=0;
     char c;
@@ -49,9 +46,6 @@ int read_filerc(char *directory, char *background, char *option) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     directory[i]=c;
                 }
-#if DEBUG > 10
-                printf("DIR letto: %s\n",directory);
-#endif
                 for (i=0; i<ri; i++) 
                     read[i]='\0';
                 ri=0;
@@ -61,9 +55,6 @@ int read_filerc(char *directory, char *background, char *option) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     background[i]=c;
                 }
-#if DEBUG > 10
-                printf("BG letto: %s\n",background);
-#endif
                 for (i=0; i<ri; i++) 
                     read[i]='\0';
                 ri=0;
@@ -73,26 +64,17 @@ int read_filerc(char *directory, char *background, char *option) {
                 for (i=0; (c=getc(config_file))!='\n'; i++) {
                     option[i]=c;
                 }
-#if DEBUG > 10
-                printf("OPT letto: %s\n",option);
-#endif
                 for (i=0; i<ri; i++) 
                     read[i]='\0';
                 ri=0;
                 continue;
             }
-
         }
     }
-    /*
-    printf("\n\n\n");
-    for (i=0; read[i]!='\0'; i++) {
-        printf("%d: %c\t%d\n",i,read[i],read[i]);
-    }
-    printf("\n\n\n");*/
+
     fclose(config_file);
-    
-    return 0; 
+
+    return 0;
 }
 
 int write_filerc( const char *directory,  const char *background,  const char *option) {
@@ -103,7 +85,7 @@ int write_filerc( const char *directory,  const char *background,  const char *o
 
     config_file = fopen(config_file_dir, "w");
 
-    fprintf(config_file, "#\t this file has been automatically rewritten\nDIR %s\nBG %s\nOPT %s",directory,background,option);
+    fprintf(config_file, "#\tthis file has been automatically rewritten\nDIR %s\nBG %s\nOPT %s\n",directory,background,option);
 
     fclose(config_file);
     return 0;

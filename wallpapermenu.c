@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
             if(!strcmp(argv[i], "--help")) {
                 printf("\n--no-gui\tjust read config file and exit (same as nitrogen --restore)\n");
                 exit(EXIT_SUCCESS);
-            }          
+            }
         }
 //          ---- WALLPAPERMENU ----
     int i,menu_ret=1,nEntries; //MEM il menu conta da 1 a nEntries
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     read_filerc(directory, background, option);
     menu=getWallpaper(directory, &nEntries);
 
-    initscr();                  
+    initscr();
     noecho();
     keypad (stdscr, TRUE);
     meta (stdscr, TRUE);
@@ -81,13 +81,7 @@ char **getWallpaper(char *directory, int *nEntries) {
     char result[256]={0x0};
     char **menu;
 
-#if DEBUG > 5
-    printf("ls:\n");
-#endif 
     while ((c=getc(cmd))!=EOF) {
-#if DEBUG > 5
-        printf("%c",c);
-#endif
         if(c=='\n') {
             wallpapers[i][j]='\0';
             j=0;
@@ -100,25 +94,13 @@ char **getWallpaper(char *directory, int *nEntries) {
     pclose(cmd);
 
     strcpy(wallpapers[i++], "option");
-    strcpy(wallpapers[i++], "exit"); //chiarire perchè qui va ++
+    strcpy(wallpapers[i++], "exit");
     *nEntries=i;
-#if DEBUG > 5
-    printf("\t\t\tgetWallpaper %d\n",*nEntries);
-    if(menu==NULL) {
-        printf("ERRORE\n");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("wallpapers:\n");
-    for (j = 0; j < i; j++) 
-        printf("%s\t\tlen: %lu\n",wallpapers[j],strlen(wallpapers[j]));
-#endif
 
     menu = (char**) malloc(*nEntries * sizeof(char*));
     for (j = 0; j < *nEntries; j++) {
         menu[j] = (char*)malloc(strlen(wallpapers[j]) + 1);
         strcpy(menu[j],wallpapers[j]);
-        //printf("%s len:%lu\n",menu[j],strlen(wallpapers[j]));
     }
     return menu;
 }
@@ -129,11 +111,7 @@ char **getWallpaper(char *directory, int *nEntries) {
 void done(char *directory, char *background, char *option) {
     char cmd[256] = "feh --no-fehbg --bg-";
 
-    strcat(option, " ");
-    
-    strcat(cmd, option);
-    strcat(cmd, directory);
-    strcat(cmd,background);
+    sprintf(cmd, "feh --no-fehbg --bg-%s %s%s",option,directory,background);
     printf("%s\n",cmd);
     system(cmd);
 }
